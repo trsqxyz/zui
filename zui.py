@@ -12,9 +12,12 @@ class Zui:
         if not config.API_KEY:
             webbrowser.open('https://www.pushbullet.com/account')
             API_KEY = input('Copy and Paste Access Token: ')
-            with open('config.py', 'w') as f:
-                f.write('API_KEY = "{0}"'.format(API_KEY))
-                f.flush()
+            with open('config.py', 'r') as rf:
+                setting = rf.readlines()
+                setting[0] = 'API_KEY = "{0}"\n'.format(API_KEY)
+            with open('config.py', 'w') as wf:
+                wf.writelines(setting)
+                wf.flush()
         else:
             API_KEY = config.API_KEY
         self._name = config.PUSH_TARGET
