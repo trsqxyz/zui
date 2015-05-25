@@ -7,5 +7,5 @@ Zui is 随筆(Zui-hitsu) which means essay in Japanese.
 `python -m zui`
 
 # Requirements
-- DayOne Client
+- ~~DayOne Client~~
 - Pushbullet
