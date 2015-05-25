@@ -83,7 +83,6 @@ class Zui:
             ),
         }
         clear, pause = clear[platform.system()][0], clear[platform.system()][1]
-        print(clear, pause)
         os.system(clear)
         return pause
 
