@@ -17,6 +17,7 @@ class Zui:
         self.pb = Pushbullet(self.api_key())
         self.target = self.make_devices()
         self.dayone = config.URL_SCHEME
+        self.clear, self.pause = self.check_platform()
 
     def api_key(self):
         if config.API_KEY:
@@ -90,9 +91,7 @@ class Zui:
                 'C-d'
             ),
         }
-        clear, pause = clear[platform.system()][0], clear[platform.system()][1]
-        os.system(clear)
-        return pause
+        return cp[platform.system()][0], cp[platform.system()][1]
 
 
 def main():
