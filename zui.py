@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import functools
 import os
 import platform
 import sys
@@ -48,6 +49,16 @@ class Zui:
                 )
                 self.make_devices()
 
+    def clear_notepad(f):
+        functools.wraps(f)
+        def wraps(*args):
+            os.system(args[0].clear)
+            result = f(*args)
+            os.system(args[0].clear)
+            return result
+        return wraps
+
+    @clear_notepad
     def push_to_dayone(self):
         '''Pushbullet couldn't link then whitespace in URL.
         So, it doesn't push_link, just push_note.
@@ -59,20 +70,17 @@ class Zui:
             return self.pb.push_note('', body, device=self.target)
         except (KeyboardInterrupt, TypeError) as e:
             return False
-        finally:
-            self.clear_notepad()
 
     def notepad(self):
         try:
-            pause = self.clear_notepad()
-            print('Push: {}, Close: C-c'.format(pause))
+            print('Push: {}, Close: C-c'.format(self.pause))
             lines = [line for line in sys.stdin.readlines()]
             return ''.join(lines)
         except KeyboardInterrupt as e:
             return e
 
-    def clear_notepad(self):
-        clear = {
+    def check_platform(self):
+        cp = {
             'Windows': (
                 'CLS',
                 'C-z'
