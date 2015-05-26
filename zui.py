@@ -99,7 +99,7 @@ def main():
     while z.push_to_dayone():
         pass
     else:
-        print('Bye')
+        print('Bye.')
 
 
 if __name__ == '__main__':
