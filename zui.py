@@ -69,7 +69,7 @@ class Zui:
             #  body = self.dayone + self.notepad()
             body = self.notepad()
             return self.pb.push_note('', body, device=self.target)
-        except (KeyboardInterrupt, TypeError) as e:
+        except KeyboardInterrupt as e:
             return False
 
     def notepad(self):
@@ -78,7 +78,7 @@ class Zui:
             lines = [line for line in sys.stdin.readlines()]
             return ''.join(lines)
         except KeyboardInterrupt as e:
-            return e
+            raise e
 
     def check_platform(self):
         cp = {
