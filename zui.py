@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import functools
 import os
 import platform
 import sys
@@ -16,6 +17,7 @@ class Zui:
         self.pb = Pushbullet(self.api_key())
         self.target = self.make_devices()
         self.dayone = config.URL_SCHEME
+        self.clear, self.pause = self.check_platform()
 
     def api_key(self):
         if config.API_KEY:
@@ -48,6 +50,16 @@ class Zui:
                 )
                 self.make_devices()
 
+    def clear_notepad(f):
+        functools.wraps(f)
+        def wraps(*args):
+            os.system(args[0].clear)
+            result = f(*args)
+            os.system(args[0].clear)
+            return result
+        return wraps
+
+    @clear_notepad
     def push_to_dayone(self):
         '''Pushbullet couldn't link then whitespace in URL.
         So, it doesn't push_link, just push_note.
@@ -57,22 +69,19 @@ class Zui:
             #  body = self.dayone + self.notepad()
             body = self.notepad()
             return self.pb.push_note('', body, device=self.target)
-        except (KeyboardInterrupt, TypeError) as e:
+        except KeyboardInterrupt as e:
             return False
-        finally:
-            self.clear_notepad()
 
     def notepad(self):
         try:
-            pause = self.clear_notepad()
-            print('Push: {}, Close: C-c'.format(pause))
+            print('Push: {}, Close: C-c'.format(self.pause))
             lines = [line for line in sys.stdin.readlines()]
             return ''.join(lines)
         except KeyboardInterrupt as e:
-            return e
+            raise e
 
-    def clear_notepad(self):
-        clear = {
+    def check_platform(self):
+        cp = {
             'Windows': (
                 'CLS',
                 'C-z'
@@ -82,9 +91,7 @@ class Zui:
                 'C-d'
             ),
         }
-        clear, pause = clear[platform.system()][0], clear[platform.system()][1]
-        os.system(clear)
-        return pause
+        return cp[platform.system()][0], cp[platform.system()][1]
 
 
 def main():
@@ -92,7 +99,7 @@ def main():
     while z.push_to_dayone():
         pass
     else:
-        print('Bye')
+        print('Bye.')
 
 
 if __name__ == '__main__':
